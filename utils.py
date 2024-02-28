@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import array
 
@@ -18,6 +19,7 @@ import threading
 
 
 def resize_image(img):
+
     im = resize(img, (Sample.IMG_H, Sample.IMG_W, Sample.IMG_D))
     im_arr = im.reshape((Sample.IMG_H, Sample.IMG_W, Sample.IMG_D))
     return im_arr
@@ -154,6 +156,7 @@ class Data(object):
 def load_sample(sample):
     image_files = np.loadtxt(sample + '/data.csv', delimiter=',', dtype=str, usecols=(0,))
     joystick_values = np.loadtxt(sample + '/data.csv', delimiter=',', usecols=(1,2,3,4,5))
+    #print(joystick_values)
     return image_files, joystick_values
 
 def load_imgs(sample):
@@ -190,13 +193,11 @@ def viewer(sample):
         # plot
         plt.subplot(122)
         plt.plot(range(i,i+len(plotData)), x[:,0], 'r')
-        plt.hold(True)
         plt.plot(range(i,i+len(plotData)), x[:,1], 'b')
         plt.plot(range(i,i+len(plotData)), x[:,2], 'g')
         plt.plot(range(i,i+len(plotData)), x[:,3], 'k')
         plt.plot(range(i,i+len(plotData)), x[:,4], 'y')
         plt.draw()
-        plt.hold(False)
 
         plt.pause(0.0001) # seconds
         i += 1
@@ -205,6 +206,11 @@ def viewer(sample):
 # prepare training data
 def prepare(samples):
     print("Preparing data")
+
+    num_samples = 0
+
+    if (samples[0]=='samples/*'):
+        samples = ['./samples/'+name for name in os.listdir('./samples') if os.path.isdir(os.path.join('./samples', name))]
 
     for sample in samples:
         image_files = load_imgs(sample)
@@ -215,11 +221,12 @@ def prepare(samples):
     X = np.empty(shape=(num_samples, Sample.IMG_H, Sample.IMG_W, 3), dtype=np.uint8)
     y = []
 
-    for idx, sample in enumerate(samples):
-        print(sample)
+    idx = 0
 
+    for ix, sample in enumerate(samples):
         # load sample
         image_files, joystick_values = load_sample(sample)
+        print(sample)
 
         # add joystick values to y
         y.append(joystick_values)
@@ -229,6 +236,9 @@ def prepare(samples):
             image = imread(image_file)
             vec = resize_image(image)
             X[idx] = vec
+            idx+=1
+            if idx % 100 == 0:
+                print(str(idx) + ' ' + str(idx * 100 / num_samples) + '%')
 
     print("Saving to file...")
     y = np.concatenate(y)

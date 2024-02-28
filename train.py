@@ -57,15 +57,19 @@ if __name__ == '__main__':
     y_train = np.load("data/y.npy")
 
     print(x_train.shape[0], 'train samples')
+    print(len(y_train))
 
     # Training loop variables
     epochs = 100
-    batch_size = 50
+    batch_size = 32
 
     model = create_model()
     
     checkpoint = ModelCheckpoint('model_weights.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
     callbacks_list = [checkpoint]
     
-    model.compile(loss=customized_loss, optimizer=optimizers.adam())
-    model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, shuffle=True, validation_split=0.1, callbacks=callbacks_list)
+    model.compile(loss=customized_loss, optimizer=optimizers.Adam(learning_rate=0.0005)) #learning_rate=0.0005
+
+    model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, shuffle=True, validation_split=0.2, callbacks=callbacks_list)
+
+    model.save_weights('model_weights.h5')

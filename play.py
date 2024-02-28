@@ -39,8 +39,9 @@ class Actor(object):
         ## Act
 
         ### calibration
+            
         output = [
-            int(joystick[0] * 80),
+            int(joystick[0] * 200),
             int(joystick[1] * 80),
             int(round(joystick[2])),
             int(round(joystick[3])),

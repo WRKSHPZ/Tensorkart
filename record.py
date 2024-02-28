@@ -88,7 +88,7 @@ class MainWindow():
         self.outputDirStrVar = tk.StringVar()
         self.txt_outputDir = tk.Entry(textframe, textvariable=self.outputDirStrVar, width=100)
         self.txt_outputDir.pack(side=tk.LEFT)
-        self.outputDirStrVar.set("samples/" + datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+        self.outputDirStrVar.set("samples/" + datetime.now().strftime('%Y-%m-%d_%H%M%S'))
 
         self.record_button = ttk.Button(bottom_half, text="Record", command=self.on_btn_record)
         self.record_button.pack(side = tk.LEFT, padx=5)
@@ -149,7 +149,7 @@ class MainWindow():
 
     def draw(self):
         # Image
-        self.img.thumbnail(IMAGE_SIZE, Image.ANTIALIAS) # Resize
+        self.img.thumbnail(IMAGE_SIZE, Image.ADAPTIVE) # Resize
         self.img_panel.img = ImageTk.PhotoImage(self.img)
         self.img_panel['image'] = self.img_panel.img
 
