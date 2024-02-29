@@ -7,3 +7,4 @@ termcolor
 h5py
 tensorflow
 Pillow
+pandas
